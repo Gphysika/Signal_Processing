@@ -1,0 +1,440 @@
+/*README diagnostic by sound/vibration analysis
+  NAME:
+    README
+
+  AUTHOR:
+    AMADOU GUEYE (AG), Année pré-doctorale, amadou.gueye@univ-psl.fr
+    mail personnel : gueyamadou@hotmail.fr
+ 
+*/
+ 
+
+
+Librairie de traitement du signal "Code_gueye"
+Nécessite un environnement unix pour la compilation, l'exécution et la visualksation des résultats
+il comprend six dossiers :
+							
+										
+									=====									=====
+									=											=
+									=		1°) Données							=
+									=		2°) Fichiers_générés				=
+									=		3°) Fichiers_intermédiaires			=
+									=		4°) Modules_fonctions				=
+									=		5°) Programmes_principaux			=
+									=		6°) Résultat_image					=
+									=											=
+									=====									=====
+
+
+									
+									
+									
+		+============================================================================+
+		+																			 +
+		+	I.) Organisation globale de la librairie : détails sur les six dossiers  +
+		+																			 +
+		+============================================================================+
+
+
+			*==========================*
+			* 1°) Le dossier ./Données *
+			*==========================*
+			 
+			Ce dossier comporte un dossier nommé ./TSign_AStat qui contient à la fois les données pour effectuer dun traitement du signal (TSign : 
+			Traitement du Signal) et éventuellement les données destinées à une nalyse statistique suite à un traitement du signal
+			(AStat : Analyse statistique)
+
+			Dans le dossier ./TSign_AStat on trouve deux répertoires: ./Data_sound et ./Data_vibration
+
+				./Data_sound comprend le dossier :
+					./Inputs_MT : dossier d'entrée de données inputs de type sonore provenant de mesures
+					effectuées sur les machines tournantes : MT (Machines Tournantes). Ce répertoire comprend
+					les dossiers suivant:
+						./Données_observées ./Données_référence ./Données_réf_uniq
+			
+							./Données_observées : contient des données de mesure qui peuvent contenir des
+							informations renseignant de l'état de fonctionnement défectueux de la machine
+							tournant observée
+				
+							./Données_référence : contient des données de mesure qui renseignent de l'état de
+							fonctionnement normal de la machine tournant observée
+				
+							./Données_réf_uniq: dans le cas où une surveillance continue de la machine
+							tournante est effectuée, ces données permettent de faire une étude basée sur la
+							détection de défaillance en évaluant un dépassement de seuil donnée sous forme de
+							variance ou d'écart-type
+				
+				./Data_vibration comprend le dossier de données de mesures de type vibration disponibles dans la
+				base de données de l'Université Case Western Reserve. Il s'agit des mesures de vibrations obtenues
+				à partir d'accéléromètres placés au niveau des extrémités des paliers localisés dans les roulements
+				mécaniques d'un moteur électrique de puissance 2 Hp (Reliance Electric motor)
+				(http://csegroups.case.edu/bearingdatacenter/pages/download-data-file)
+				Ce répertoire comprend quatre dossiers :
+	
+					./12k Drive End Bearing Fault Data : Les données numériques ont été enregistrées à la fréquence
+					d'échantillonnage de 12 000 échantillons par seconde (12 KHz)
+		
+					./48k Drive End Bearing Fault Data : données mesurées à la fréquence de 48 Khz
+		
+					./12k Fan End Bearing Fault :  données mesurées à la fréquence de 12 Khz
+		
+					./Data Normal Baseline Data : Données de mesure caractéristique d'un fonctionnement normale
+
+
+			*===================================*
+			* 2°) Le dossier ./Fichiers_générés *
+			*===================================*
+
+			Ce répertoire comprend deux sous-répertoires : ./AStat  ./TSign
+
+				./AStat : pour contenir les fichiers générés par une éventuelle analyse statistique réalisée sur les
+				les données.
+	
+				./TSign : comprend deux sous-répertoires ./Audio_MT et  ./Fichier_dat
+	
+					./Audio_MT : pour contenir les fichiers de format .wav résultant d'un filtre laissant passer que
+					les pics d'amplitude caractéristiques d'une anomalie dans le signal sonore (pics d'amplitude
+					visibles à travers le spectre de puissance du signal). Dans cet exemple, le fichier audio est nommé comme ainsi :
+					E_machine.wav_data.dat_tf_audio-filtre.wav
+		
+					./Fichier_dat : pour contenir les fichiers générés par les différents algorithmes de traitement
+					du signal réalisés (fft, stft, mfcc) et les fichiers de données extraites (fichiers de format .dat) à partir des fichiers
+					d'entrée de format .wav. Il s'agit des fichiers suivants : 
+					
+						E_machine.wav_data.dat
+						E_machine.wav_data.dat_FFT.dat
+						E_machine.wav_data.dat_mfcc.dat
+						E_machine.wav_data.dat_stft_magn_BaW.dat
+						E_machine.wav_data.dat_stft_magn_BlW.dat
+						E_machine.wav_data.dat_stft_magn_GW.dat
+						E_machine.wav_data.dat_stft_magn_HamW.dat
+						E_machine.wav_data.dat_stft_magn_HanW.dat
+						E_machine.wav_data.dat_stft_magn_KW.dat
+						E_machine.wav_data.dat_stft_magn_SW.dat
+						E_machine.wav_data.dat_stft_magn_TW.dat
+						E_machine.wav_data.dat_stft_magn_WeW.dat
+
+
+			*==========================================*
+			* 3°) Le dossier ./Fichiers_intermédiaires *
+			*==========================================*
+
+			Ce répertoire comprend deux sous-répertoires : ./AStat  ./TSign
+	
+				./AStat : pour contenir les fichiers générés par une éventuelle analyse statistique réalisée sur les
+				les données.
+	
+				./TSign : comprend un sous-répertoire ./Fichier_dat
+		
+					./Fichier_dat : Dans ce dossier on trouve tous les fichiers intermédiaires générés soit à titre informatif
+					vérificatif, ou générés en vue préparer une étude ultérieure. Voici la liste des fichiers intermédiares générés
+					ainsi que le module du programme qui le génère :
+		
+						E_Info.dat : fichier généré par le module "extract_data_1file.c", contient les informations suivantes :
+						
+							- taille des tableaux de données à allouer pour faire une transformée de Fourier rapide. La taille
+							qui doit être égale à 2^P (p est un entier)
+							- le nombre d'échantillons ou nombre de points que contiennent les données du (des) fichier(s) d'entrée *.wav
+							- le nom (des) du fichier(s) contenant les données qui sont extraites du (des) fichier(s) d'entrée de format .*wav
+			
+						
+						E_machine.wav_data.dat_FFT-inverse-onde-time-freq.dat : fichier généré par le module "call_fft.c"
+						pour stocker le résultat de la transformée de Fourier inverse. Le résultat doit être identique à l'onde d'origine ayant
+						subie une transformée de Fourier rapide. Le fichier contient donc l'onde (intensité du signal) en fonction du temps et
+						des fréquences respectives, c'est-à-dire les mêmes informations que le fichier "E_machine.wav_data.dat_onde-time-freq.dat"
+		
+						
+						E_machine.wav_data.dat_ft_filtre_magnitude-après-filtre.dat : fichier généré par le module "ft_filtre.c" pour vérifier
+						si le spectre de puissance correspond aux pics d'amplitude caractéristiques d'une anomalie dans
+						le signal sonore (pics d'amplitude élevés visibles à travers le spectre de puissance du signal originelle).
+		
+						
+						E_machine.wav_data.dat_ft_filtre_magnitude-avant-filtre.dat : fichier généré par le module "ft_filtre.c"
+						contient le résultat du module "ft.c" qui effectue une transformée de Fourier rapide sur les données
+						en entrée sous forme d'un tableau unique (tabelau contenant les vraies données et des imaginaires initialisées à zéro)
+						de taille 2^P (p est un entier) contrairement au module "fft.c" qui nécessicite en entrée un tableau de réelle
+						(Re : vraies données) et d'imaginaire (Im : données imaginaires nulles).
+						Le but est de comparer les résultats avec ceux obtenus par le module fft.c (voir le fichier "E_machine.wav_data_FFT.dat").
+		
+						
+						E_machine.wav_data.dat_mfcc_fft_magnitude.dat : fichier généré par le module "mfcc.c", constitut
+						le résultat à la quatrième étape de l'algorithme mfcc, c'est pour stocker l'amplitude en fonction
+						des fréquences dans chaque fenêtre (résultat de la fft.c dans chaque fenêtre)
+		
+						
+						E_machine.wav_data.dat_mfcc_melfiltrebank.dat : fichier généré par le module "mfcc.c", contient le résultat
+						des amplitudes filtrées à la fois avec le filtre mel et le filtre triangulaire
+		
+						
+						E_machine.wav_data.datmfcc_melfreq.dat : fichier généré par le module "mfcc.c", contient le fichier
+						des fréquences audibles pour l'être humain (fréquence mel)
+		
+						
+						E_machine.wav_data.dat_mfcc_reechantillon.dat : fichier généré par le module "mfcc.c", contient les fenêtres de données 
+						rééchantillonnées à la deuxième étape de l'algorithme mfcc
+		
+						
+						E_machine.wav_data.dat_mfcc_reechantillon_hamming.dat : fichier généré par le module "mfcc.c", contient les fenêtres
+						de données filtrées avec le filtre de hamming à la troisième étape de l'algorithme mfcc
+		
+						
+						E_machine.wav_data.dat_onde-time-freq.dat : fichier généré par le module "call_fft.c" pour stocker dans le fichier
+						de l'onde (intensité du signal) en fonction du temps et des fréquences respectives
+		
+						
+						Les fichiers suivants sont générés par le module "stft.c" à la troisième étape de l'algorithme stft. On y trouve
+						d'une part le fichier de données rééchantilonnées en fenêtres de taille fixe (E_machine.wav_data.dat_stft_reech.dat)
+						et d'autre part les fichiers contenant les données rééchantillonées en fenêtres qui sont filtrées avec les filtres
+						respecifs "square window (SW)", "Bartlett window : BaW", "Hanning window : HanW", "Hamming window : HamW",
+						"Blackman window : BlW", "Gaussian window : GW", "Welch window : WeW", "Triangular window : TW" et "Kaiser window : KW".
+						Il s'agit des fichiers suisvants :
+						
+							E_machine.wav_data.dat_stft_reech.dat
+							E_machine.wav_data.dat_stft_reech_BaW.dat
+							E_machine.wav_data.dat_stft_reech_BlW.dat
+							E_machine.wav_data.dat_stft_reech_GW.dat
+							E_machine.wav_data.dat_stft_reech_HamW.dat
+							E_machine.wav_data.dat_stft_reech_HanW.dat
+							E_machine.wav_data.dat_stft_reech_KW.dat
+							E_machine.wav_data.dat_stft_reech_SW.dat
+							E_machine.wav_data.dat_stft_reech_TW.dat
+							E_machine.wav_data.dat_stft_reech_WeW.dat
+		
+						
+						E_machine.wav_Header.dat : fichier généré par le module "wave.c", contient les informations sur le header
+						des fichiers "*.wav" donnés en entrée
+
+
+			*====================================*
+			* 4°) Le dossier ./Modules_fonctions *
+			*====================================*
+
+			Ce répertoire comprend deux sous-répertoires : ./AStat  ./TSign
+
+				./AStat : pour contenir les modules pour effectuer une éventuelle analyse statistique réalisée sur les
+				les données.
+	
+				./TSign : contient tous les modules utiles au traitement du signal et dont fait appel le programme
+				principal "diagnostic.c" lovalisé dans le répertoire ./code_gueye/Programmes_principaux/TSign
+				Le dossier comprend aussi tous les fichiers header correspondant à chaque module (*.h) et les
+				fichiers objet (*.o) dont fait appel le fichier Makefile pour fabriquer l'exécutable "diagnostic". Il s'agit des fichiers suivants : 
+		
+					call_fft.c            ft_filtre.c  stft.c
+					call_fft.h            ft_filtre.h  stft.h
+					call_fft.o            ft_filtre.o  stft.o
+					extract_data_1file.c  ft.h         supp_chaine_caractere.c
+					extract_data_1file.h  ft.o         supp_chaine_caractere.h
+					extract_data_1file.o  gnuplot      supp_chaine_caractere.o
+					extract_data_2file.c  libmfcc.c    viderbuffer_supp_saut_ligne.c
+					extract_data_2file.h  libmfcc.h    viderbuffer_supp_saut_ligne.h
+					extract_data_2file.o  libmfcc.o    viderbuffer_supp_saut_ligne.o
+					fft.c                 Makefile     wave.c
+					fft.h                 mfcc.c       wave.h
+					fft.o                 mfcc.h       wave.o
+					ft.c                  mfcc.o
+
+				La fonction de chaque module, fichiers "*.c" énumérés ci-dessus est donnée dans la partie II°) expliquant les différentes étapes
+				pour compiler et exécuter le programme 
+
+
+			*========================================*
+			* 5°) Le dossier ./Programmes_principaux *
+			*========================================*
+
+			Ce répertoire comprend deux sous-répertoires : ./AStat  ./TSign
+
+				./AStat : pour contenir les programmes principaux destinés à une éventuelle analyse statistique réalisée sur les
+				les données. Ces programmes programmes seront indépendants de la partie traitement du signal réalisée par le
+				programme principal dédié, "diagnostic.c"
+	
+				./TSign : pour contenir les programmes principaux destinés à une analyse du signal réalisée sur les les données.
+				Ce dossier comprend un seul programme "diagnostic.c", le fichier objet lui correspondant "diagnostic.o" permettant au
+				fichier Makefile contenu dans ce dossier de lui frabriquer dans le même dossier un exécutable nommé : "diagnostic",
+				grâce aux autres fichiers objet corespondant aux modules localisés dans le répertoire ./Modules_fonctions
+				C'est dans ce dossier que l'utilisateur se place à partir d'un terminal pour compiler et exécuter le programme principal diagnostic.c
+
+
+			*=================================*
+			* 6°) Le dossier ./Résultat_image *
+			*=================================*
+			
+			Ce répertoire contient les fichiers images de format "png" (*.png). Ces fichiers sont des graphes qui représentent les résultats
+			obtenus par chaque module utilisé (fft, mfcc, stft) par le programme principal nommé "diagnostic".
+			Il s'agit des graphes visualisés à partir des fichiers suivants :
+			
+				E_machine.wav_data.dat_FFT.dat
+				E_machine.wav_data.dat_mfcc.dat
+				E_machine.wav_data.dat_stft_magn_BaW.dat
+				E_machine.wav_data.dat_stft_magn_BlW.dat
+				E_machine.wav_data.dat_stft_magn_GW.dat
+				E_machine.wav_data.dat_stft_magn_HamW.dat
+				E_machine.wav_data.dat_stft_magn_HanW.dat
+				E_machine.wav_data.dat_stft_magn_KW.dat
+				E_machine.wav_data.dat_stft_magn_SW.dat
+				E_machine.wav_data.dat_stft_magn_TW.dat
+				E_machine.wav_data.dat_stft_magn_WeW.dat
+									
+								
+								
+								
+								
+		+========================================================================+
+		+																		 +
+		+	II.) Les différentes étapes pour compiler et exécuter le programme	 +
+		+																		 +
+		+========================================================================+
+
+			L'utilisateur se positionne dans le répertoire ./code_gueye/Programmes_principaux/TSign/ qui contient les fichiers diagnostic.c
+			et le fichier Makefile. Il ouvre un terminal à partir de ce répertoire (./Programmes_principaux/TSign/)
+
+			diagnostic.c est le programme principal de tout l'algorithme de traitement du signal.
+			
+			Makefile : est le fichier qui permet de compiler tout les fichiers du programme. il s'agit du fichier diagnostic.c
+			et des différents modules wave.c, ft.c, fft.c, call_fft.c, libmfcc.c, mfcc.c, stft.c, ft_filtre.c, extract_data_1file.c,
+			extract_data_2file.c, viderbuffer_supp_saut_ligne.c, supp_chaine_caractere.c
+			Makefile permet de créer le fichier exécutable "diagnostic" ainsi que les fichiers objet
+			(aussi appelés fichiers intermédiaires) "*.o" associés aux différents modules
+
+			Une fois dans le répertoire sus mentionné, l'utilisateur effectue les tâches suivantes en exécutant
+			les commandes suivantes (commande entre guillemets):
+
+
+				- "make clean" : permet de supprimer tous les fichiers "*.o" (localisés dans les répertoires
+				./code_gueye/Programmes_principaux/TSign/ et ./code_gueye/Modules_fonctions/TSign/),
+				"*.dat" (localisés dans les répertoires ./code_gueye/Fichiers_intermédiaires/TSign/Fichier_dat/
+				et ./code_gueye/Fichiers_générés/TSign/Fichier_dat/) et *.wav(localisés dans le répartoire
+				./code_gueye/Fichiers_générés/TSign/Audio_MT/)
+	
+					exemple :
+						agueye@agueye-VirtualBox:~/Documents/code_gueye/Programmes_principaux/TSign$ make clean
+					résultat visible dans le terminal :
+					rm -f *.o diagnostic
+					rm -f *.o ../../Modules_fonctions/TSign/*.o
+					rm -f ../../Fichiers_intermédiaires/TSign/Fichier_dat/*.dat
+					rm -f ../../Fichiers_générés/TSign/Fichier_dat/*.dat
+					rm -f ../../Fichiers_générés/TSign/Audio_MT/*.wav
+			
+				- "make" : pour compiler tout le programme
+	
+					exemple :
+						agueye@agueye-VirtualBox:~/Documents/code_gueye/Programmes_principaux/TSign$ make
+					résultat visible dans le terminal :
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror -I /usr/include -c diagnostic.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/wave.o ../../
+					Modules_fonctions/TSign/wave.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/ft.o ../../
+					Modules_fonctions/TSign/ft.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/
+					ft_filtre.o ../../
+					Modules_fonctions/TSign/ft_filtre.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/fft.o ../../
+					Modules_fonctions/TSign/fft.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/call_fft.o ../../
+					Modules_fonctions/TSign/call_fft.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/libmfcc.o ../../
+					Modules_fonctions/TSign/libmfcc.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/mfcc.o ../../
+					Modules_fonctions/TSign/mfcc.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/stft.o ../../
+					Modules_fonctions/TSign/stft.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/
+					extract_data_1file.o ../../Modules_fonctions/TSign/extract_data_1file.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/
+					extract_data_2file.o ../../Modules_fonctions/TSign/extract_data_2file.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/
+					viderbuffer_supp_saut_ligne.o ../../Modules_fonctions/TSign/viderbuffer_supp_saut_ligne.c
+					/usr/bin/gcc -ansi -Wall -Wextra -Werror   -c -o ../../Modules_fonctions/TSign/
+					supp_chaine_caractere.o ../../Modules_fonctions/TSign/supp_chaine_caractere.c
+					/usr/bin/gcc -L /usr/lib diagnostic.o ../../Modules_fonctions/TSign/wave.o ../../
+					Modules_fonctions/TSign/ft.o ../../Modules_fonctions/TSign/ft_filtre.o ../../Modules_fonctions/
+					TSign/fft.o ../../Modules_fonctions/TSign/call_fft.o ../../Modules_fonctions/TSign/
+					libmfcc.o ../../Modules_fonctions/TSign/mfcc.o ../../Modules_fonctions/TSign/stft.o ../../
+					Modules_fonctions/TSign/extract_data_1file.o ../../Modules_fonctions/TSign/
+					extract_data_2file.o ../../Modules_fonctions/TSign/viderbuffer_supp_saut_ligne.o ../../
+					Modules_fonctions/TSign/supp_chaine_caractere.o -o diagnostic -lm
+		
+				- "./diagnostic" : permet d'exécuter le programme
+	
+					Exemple :
+		
+						~/Documents/code_gueye/Programmes_principaux/TSign$ ./diagnostic
+			
+						résultat visible dans le terminal :
+			
+						Choisissez le type d'analyse à effectuer :
+						***1.***  Analyse sonore
+						***2.***  Analyse vibratoire
+							1 (chiffre entrer dans le terminal, ici choix d'une Analyse sonore : ***1.***  Analyse sonore )
+								Vous avez choisi de faire une Analyse sonore (phrase qui apparaît dans le terminal)
+			
+						entrer le nombre de fichier audio à analyser (1 ou 2):
+							1 (chiffre entrer dans le terminal : ici choix d'un fichier unique dans le cas où une
+							surveillance continue de la machine tournante est effectuée, les données du fichier
+							choisi permettent de faire une étude basée sur la détection de défaillance en évaluant, par rapport à
+							une mesure précédente, undépassement de seuil donnée sous forme de variance ou d'écart-type)
+			
+						entrer le nom du fichier unique a analyser :
+						machine.wav
+						(nom du fichier entré, localisé dans le répertoire ./code_gueye/Données/TSign_AStat/Data_sound/Inputs_MT/Données_obs_unique)
+		
+					*===========================================================================================*
+					*  Commentaires sur les étapes intermédiaires successives ne nécessitant pas d'interaction  *
+					*  avec l'utilisateur et faisant appel aux différents modules ci-dessous :					*
+					*===========================================================================================*
+		
+					 	- le module "extract_data_1file.c" : fait appel au module wave.c qui lit le fihier entré
+					 	"machine.wav" pour extraire les données et les écrit dans un fichier nommé
+					 	"E_machine.wav_data.dat" (localisé dans le répertoire ./code_gueye/Fichiers_générés/TSign/
+					 	Fichier_dat) selon une convention d'écriture adoptée pour les noms de fichiers générés
+					 	(voir document dans Sharepoint : P4/Integration/P4_Amadou/)
+					 	
+					 	- le module call_fft.c : fait appel au module fft.c qui permet de réaliser la Transformée
+					 	de Fourier rapide sur les données du fichier "E_machine.wav_data.dat". Le résultat est
+					 	stocké dans le fichier "E_machine.wav_data_FFT.dat" (localisé dans le répertoire
+					 	./code_gueye/Fichiers_générés/TSign/
+					 	Fichier_dat)
+					 	
+					 	- le module "ft_filtre.c" : fait appel au module ft.c qui permet de réaliser une 
+					 	Transformée de Fourier rapide sur les données du fichier "E_machine.wav_data.dat". On
+					 	fait ensuite passer le résultat à travers un filtre de fréquence qui ne laisse passer que 
+					 	les pics d'amplitude caractéristiques d'une anomalie dans le signal sonore (pics 
+					 	d'amplitude élevés visibles à travers le spectre de puissance du signal originelle). Le résultat obtenu 
+					 	après filtrage des données est ensuite écrit dans le fichier :
+					 	"E_machine.wav_data.dat_tf_audio-filtre.wav" localisé dans le répertoire ./code_gueye/
+					 	Fichiers_générés/TSign/Audio_MT/. L'objectif de ce module est donc de permettre à l'utlisateur
+					 	d'écouter la partie du signal sonore contenant l'anomalie détectée.
+					 	
+					 	- le module "mfcc.c" réalise le calcul des amplitudes audibles pour l'humain dans la bande de 
+					 	fréquence Mel en utilisant le fichier de données "E_machine.wav_data.dat". Il fait appelle
+					 	également au module fft.c. Cette étape permet à l'utilisateur de caractériser certains 
+					 	phénomènes liés par exemple à la présence ou non de friction anormale entre certains éléments 
+					 	de la machine tournante surveillée. Ce module permet de reconnaître les patterns spécifiques à 
+					 	certains types de défaillance. le résultat est écrit dans le fichier
+					 	"E_machine.wav_data.dat_mfcc.dat" localisé dans le répertoire ./code_gueye/
+					 	Fichiers_générés/TSign/Fichier_dat/
+					 	
+					 	- le module "stft.c" réalise une analyse par fenêtrage du signal à partir des données du fichiers
+					 	"E_machine.wav_data.dat". le signal contenu dans le fichier "E_machine.wav_data.dat" est 
+					 	découpé en plusieurs morceaux (fenêtres) d'égale taille et grâce au mudule fft.c, la 
+					 	transformée de Fourier rapide est réalisée dans chacune des fenêtres du signal. Cette étape 
+					 	permet à l'utilisateur de se visualiser les fluctuations du signal sur de courtes périodes 
+					 	(phénomènes transitoires) avec une bonne résolution spatiale. les résultats sont écrits dans 
+					 	les fichiers nommés "E_machine.wav_data.dat_stft_magn_*.dat" localisé dans le répertoire
+					 	./code_gueye/Fichiers_générés/TSign/Fichier_dat/
+					 	
+					 	"*" représente ici le type de filtre utilisé pour réaliser l'algorithme de stft (Short Time 
+					 	Fourier Transform). les filtres sont au nombre de 9 répertoriés dans la literrature (voir état
+					 	de l'art), il s'agit :
+					 		
+					 		***1.***  square window : SW
+					 		***2.***  Bartlett window : BaW
+					 		***3.***  Hanning window : HanW
+					 		***4.***  Hamming window : HamW
+					 		***5.***  Blackman window : BlW
+					 		***6.***  Gaussian window : GW
+					 		***7.***  Welch window : WeW
+					 		***8.***  Triangular window : TW
+					 		***9.***  Kaiser window : KW
+		
+

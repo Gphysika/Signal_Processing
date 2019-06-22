@@ -1,0 +1,9 @@
+plot "fichier.dat" every ::100::200 ne trace que les points entre 100 et 200
+set palette defined (-.4 "blue",0 "light-grey", 1. "red")
+plot "X125_DE_time_FFT.dat" u 5:(($4)*2) w l lt 6
+plot "X125_DE_time_stft_magnitude.txt" u 6:5 every ::0::511 w l lt 6
+plot "X125_DE_time_FFT.dat" u 5:4 w l lt rgb "blue"
+set title "Densité spectrale de puissance du signal"
+set xlabel "titre x"
+set label "texte" at 3,5 affiche du texte aux coordonnées (x=3,y=5)
+

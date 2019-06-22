@@ -1,0 +1,110 @@
+# ====================================================================================== #
+#                                   Notes de l'auteur                                    #
+# ====================================================================================== #
+# ! Makefile pour le projet "Diagnostic par analyse sonore" de Business&Decision.
+# ! Ce Makefile a été adapté afin de fonctionner sur tous les systèmes
+# ! GNU/Linux pour lesquels les librairies X11 et cfitsio ont été
+# ! installées en passant par le gestionnaire de paquets de la distribution.
+
+# ====================================================================================== #
+#                                 Variables du Makefile                                  #
+# ====================================================================================== #
+
+# ------------------------------------------
+# 1 - variable du compilateur à utiliser
+# 2 - choix des options de compilation
+# 3 - liste des répertoires d'en-têtes
+# 4 - liste des répertoires de librairies
+# 5 - librairies à lier
+# ------------------------------------------
+CC     = /usr/bin/gcc
+CFLAGS = -ansi -Wall -Wextra -Werror
+IFLAGS = -I /usr/include
+LFLAGS = -L /usr/lib
+LINK   = -lm
+OFLAGS = -O2
+
+# ====================================================================================== #
+#                                   Cibles du Makefile                                   #
+# nom_cible : dependance                                                                 #
+# <tabulation> commande                                                                  #
+# ====================================================================================== #
+
+# ------------------------------------------
+# ! - all : Compile tous les exécutables
+# ! - help : Affiche cette aide
+# ! - clean : efface les fichiers objet *.o
+# !           et les exécutables
+# ------------------------------------------
+all : diagnostic test1
+
+help :
+	@grep -E "^# !" Makefile | sed -e 's/# !/ /g'
+
+clean : 
+	rm -f *.o diagnostic
+	rm -f *.o test1
+	rm -f *.o wave
+	rm -f *.o ft
+
+# ------------------------------------------
+# Exécutables
+# ------------------------------------------
+diagnostic : diagnostic.o wave.o ft.o fft4g.o fft8g.o fftsg.o fft4g_h.o fft8g_h.o fftsg_h.o
+	$(CC) $(LFLAGS) diagnostic.o wave.o ft.o fft4g.o fft8g.o fftsg.o fft4g_h.o fft8g_h.o fftsg_h.o -o diagnostic $(LINK)
+
+test1 : test1.o
+	$(CC) $(LFLAGS) test1.o -o test1 $(LINK)
+
+
+
+# ------------------------------------------
+# Fichiers intermédiaires (*.o)
+# ------------------------------------------
+diagnostic.o : diagnostic.c wave.h ft.h fft4g.h fft8g.h fftsg.h fft4g_h.h fft8g_h.h fftsg_h.h
+	$(CC) $(CFLAGS) $(IFLAGS) -c diagnostic.c
+
+test1.o : test1.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c test1.c
+
+
+wave.o : wave.c wave.h
+	$(CC) $(CFLAGS) $(IFLAGS) -c wave.c
+
+ft.o : ft.c 
+	$(CC) $(CFLAGS) $(IFLAGS) -c ft.c
+
+fft4g.o : ../fft4g.c
+	$(CC) $(CFLAGS) $(OFLAGS) -c ../fft4g.c -o fft4g.o
+
+fft8g.o : ../fft8g.c
+	$(CC) $(CFLAGS) $(OFLAGS) -c ../fft8g.c -o fft8g.o
+
+fftsg.o : ../fftsg.c
+	$(CC) $(CFLAGS) $(OFLAGS) -c ../fftsg.c -o fftsg.o
+
+fft4g_h.o : ../fft4g_h.c
+	$(CC) $(CFLAGS) $(OFLAGS) -c ../fft4g_h.c -o fft4g_h.o
+
+fft8g_h.o : ../fft8g_h.c
+	$(CC) $(CFLAGS) $(OFLAGS) -c ../fft8g_h.c -o fft8g_h.o
+
+fftsg_h.o : ../fftsg_h.c
+	$(CC) $(CFLAGS) $(OFLAGS) -c ../fftsg_h.c -o fftsg_h.o	
+#echantillon.o : echantillon.c 
+#	$(CC) $(CFLAGS) $(IFLAGS) -c echantillon.c
+	
+#recadrage.o : recadrage.c 
+#	$(CC) $(CFLAGS) $(IFLAGS) -c recadrage.c
+	
+#coordonnees.o : coordonnees.c affiche_lib.h
+#	$(CC) $(CFLAGS) $(IFLAGS) -c coordonnees.c
+	
+#main.o : main.c affiche.h gueye_regression_lineaire.h
+#	$(CC) $(CFLAGS) $(IFLAGS) -c main.c
+	
+#gueye_regression_lineaire.o : gueye_regression_lineaire.c affiche.h
+#	$(CC) $(CFLAGS) $(IFLAGS) -c gueye_regression_lineaire.c
+	
+#reglin_gueye.o : reglin_gueye.c
+#	$(CC) $(CFLAGS) $(IFLAGS) -c reglin_gueye.c
